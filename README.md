@@ -308,6 +308,10 @@
   ``` shell
    docker run -p 6379:6379 -v $PWD/data:/data  -d redis:3.2 redis-server --appendonly yes
    ```
+## Docker 安装 Wordpress
+  ``` shell
+    docker run -e WORDPRESS_DB_HOST=172.16.12.178:3306 -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_PASSWORD=76516051t -p 8082:80 --name       wordpress -d wordpress
+   ```
 ## 错误问题及解决方式记录
 
 - 错误信息:
