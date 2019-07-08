@@ -304,8 +304,10 @@
   docker kill -s HUP nginx
   ```
 
-  ​
-
+## Docker 安装 Redis 
+  ``` shell
+   docker run -p 6379:6379 -v $PWD/data:/data  -d redis:3.2 redis-server --appendonly yes
+   ```
 ## 错误问题及解决方式记录
 
 - 错误信息:
