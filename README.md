@@ -5,15 +5,15 @@
 ## 基本概念
 
 - 镜像（Image）
-  -  镜像就是一个只读的模板。
-  -  镜像可以用来创建 Docker 容器。
+  - 镜像就是一个只读的模板。
+  - 镜像可以用来创建 Docker 容器。
 - 容器（Container）
-  -  容器可以运行应用
-  -  容器是从镜像创建的运行实例，允许被启动，开始，停止，删除
-  -  各个容器之间相互隔离保证安全，相当于一个独立的linux环境
+  - 容器可以运行应用
+  - 容器是从镜像创建的运行实例，允许被启动，开始，停止，删除
+  - 各个容器之间相互隔离保证安全，相当于一个独立的linux环境
 - 仓库（Repository）
-  -  仓库分为公开仓库（Public）和私有仓库（Private）两种形式
-  -  仓库是集中存放镜像文件的场所
+  - 仓库分为公开仓库（Public）和私有仓库（Private）两种形式
+  - 仓库是集中存放镜像文件的场所
 
 ## CentOS 系列安装 Docker
 
@@ -40,20 +40,20 @@
   - 系统64位，系统内核版本3.10以上
   - CentOS7 系统 CentOS-Extras 库中已带 Docker，可以直接安装：
 
-  ``` shell
+  ```shell
   $ sudo yum install docker
   ```
 
   - 安装之后启动 Docker 服务，并使其随系统自动加载
 
-  ``` shell
+  ```shell
   $ sudo service docker start
   $ sudo chkconfig docker on
   ```
 
 - 查看Docker 版本
 
-  ``` shell
+  ```shell
   docker version
   ```
 
@@ -82,13 +82,12 @@
 - CREATED： 镜像创建时间
 - SIZE: 镜像大小
 
-
 ### 获取新的镜像
 
 - 当使用不存在镜像时Docker会自动下载此镜像
 - 也可以预先下载此镜像，使用```docker pull``` 命令
 
-### 查找镜像 
+### 查找镜像
 
 - 使用```docker search``` 命令搜索镜像
 
@@ -187,7 +186,7 @@
 
 
 
-## Docker 安装 MinIO 文件服务器 
+## Docker 安装 MinIO 文件服务器
 
 - 使用```docker search minio``` 搜索镜像
 
@@ -270,7 +269,6 @@
     docker service create --name="minio-service" --secret="access_key" --secret="secret_key" minio/minio server /data
     ```
 
-
 ## Docker 安装 Nginx 代理服务器
 
 - 拉取镜像 ``` docker push nginx```
@@ -282,46 +280,72 @@
 
 - 创建目录用于存储 容器里Nginx默认配置文件
 
-  ``` shell
+  ```shell
   mkdir -p ~/nginx/www ~/nginx/logs ~/nginx/conf
   ```
 
 - 拷贝容器内 Nginx 默认配置文件到本地当前目录下的 conf 目录
 
-  ``` shell
+  ```shell
   docker cp CONTAINERID:/etc/nginx/nginx.conf ~/nginx/conf
   ```
 
 - 部署
 
-  ``` shell
+  ```shell
   docker run -d -p 80:80 --name nginx -v ~/nginx/www:/usr/share/nginx/html -v ~/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v ~/nginx/logs:/var/log/nginx nginx
   ```
 
-- Nginx 重新载入
+- Nginx 热部署
 
   ```shell
-  docker kill -s HUP nginx
+  docker exec CONTAINERID nginx -s reload
   ```
 
-## Docker 安装 Redis 
-  ``` shell
-   docker run -p 6379:6379 -v $PWD/data:/data  -d redis:3.2 redis-server --appendonly yes
-   ```
+## Docker 安装 Mysql
+
+- ```shell
+  docker run --name mysql -e MYSQL_ROOT_PASSWORD=76516051t -d -i -p 3306:3306 --restart=always mysql:5.7
+  ```
+
+## Docker 安装 Nexus3
+
+- ```shell
+  docker pull sonatype/nexus3
+  ```
+
+- ```shell
+  docker run -d -p 8081:8081 --name nexus sonatype/nexus3
+  ```
+
+  ​
+
 ## Docker 安装 Wordpress
-  ``` shell
-    docker run -e WORDPRESS_DB_HOST=172.16.12.178:3306 -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_PASSWORD=76516051t -p 8082:80 --name       wordpress -d wordpress
-   ```
+
+- ```shell
+  docker run -e WORDPRESS_DB_HOST=172.16.12.178:3306 -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_PASSWORD=****** -p 8082:80 --name       wordpress -d wordpress
+  ```
+
+
+
+## Docker 安装 Redis
+
+- ```shell
+  docker run -p 6379:6379 -v $PWD/data:/data  -d redis:3.2 redis-server --appendonly yes
+  ```
+
 ## 错误问题及解决方式记录
 
 - 错误信息:
-  - ``` shell
+
+  - ```shell
     container_linux.go:247: starting container process caused "process_linux.go:258: applying cgroup configuration for process caused \"Cannot set property TasksAccounting, or unknown property.\""
     /usr/bin/docker-current: Error response from daemon: oci runtime error: container_linux.go:247: starting container process caused "process_linux.go:258: applying cgroup configuration for process caused \"Cannot set property TasksAccounting, or unknown property.\"".
+
     ```
 
 - 解决: centos系统版本兼容性问题，如果将系统做更新升级，即可解决
 
-  - ``` shell
+  - ```shell
     yum update
     ```
